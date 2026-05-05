@@ -3,54 +3,14 @@ import pg from 'pg';
 const { Pool } = pg;
 let pool;
 
-const memory = {
-  teams: [
-    { id: 1, code: 'team-1', name: 'Equipe 1', playerOne: '', playerTwo: '', house: '', score: 0, malus: 0, qualified: false, eliminated: false },
-    { id: 2, code: 'team-2', name: 'Equipe 2', playerOne: '', playerTwo: '', house: '', score: 0, malus: 0, qualified: false, eliminated: false },
-    { id: 3, code: 'team-3', name: 'Equipe 3', playerOne: '', playerTwo: '', house: '', score: 0, malus: 0, qualified: false, eliminated: false },
-    { id: 4, code: 'team-4', name: 'Equipe 4', playerOne: '', playerTwo: '', house: '', score: 0, malus: 0, qualified: false, eliminated: false }
-  ],
-  questions: [],
-  votes: [],
-  buzzes: [],
-  state: {
-    phase: 'welcome',
-    roundKey: 'welcome',
-    poolKey: '',
-    currentQuestionId: null,
-    revealAnswer: false,
-    publicMode: 'welcome',
-    timerLabel: '',
-    timerEndsAt: null,
-    timerDuration: 0,
-    timerRunning: false,
-    buzzLocked: false,
-    buzzWinnerTeamId: null,
-    voteOpen: false,
-    voteTitle: '',
-    voteOptions: [],
-    publicQrVisible: false
-  },
-  nextQuestionId: 1,
-  nextBuzzId: 1
-};
-
-export function useMemoryStore() {
-  return !process.env.DATABASE_URL;
-}
-
-export function getMemoryStore() {
-  return memory;
-}
-
 export function dbReady() {
-  return Boolean(process.env.DATABASE_URL) || useMemoryStore();
+  return Boolean(process.env.DATABASE_URL);
 }
 
 export function getPool() {
   if (!pool) {
     if (!process.env.DATABASE_URL) {
-      throw new Error('DATABASE_URL manquant.');
+      throw new Error('DATABASE_URL manquant. Ajoute PostgreSQL sur Railway puis référence DATABASE_URL.');
     }
 
     const sslRequired =
@@ -72,11 +32,6 @@ export async function query(sql, params = []) {
 }
 
 export async function initDatabase() {
-  if (useMemoryStore()) {
-    console.log('Mode local sans base: stockage temporaire en memoire.');
-    return;
-  }
-
   const db = getPool();
 
   await db.query(`
@@ -128,7 +83,6 @@ export async function initDatabase() {
       vote_open boolean not null default false,
       vote_title text not null default '',
       vote_options jsonb not null default '[]'::jsonb,
-      public_qr_visible boolean not null default false,
       updated_at timestamptz not null default now()
     );
 
@@ -151,18 +105,18 @@ export async function initDatabase() {
     on conflict (id) do nothing;
   `);
 
-  await db.query(`
-    alter table game_state
-    add column if not exists public_qr_visible boolean not null default false;
-  `);
+  await seedTeams();
+}
 
+async function seedTeams() {
   const rows = await query('select count(*)::int as count from teams');
   if (rows[0]?.count > 0) return;
 
-  for (let index = 1; index <= 4; index += 1) {
+  const names = ['Equipe 1', 'Equipe 2', 'Equipe 3', 'Equipe 4'];
+  for (let index = 0; index < names.length; index += 1) {
     await query(
       'insert into teams (code, name) values ($1, $2) on conflict (code) do nothing',
-      [`team-${index}`, `Equipe ${index}`]
+      [`team-${index + 1}`, names[index]]
     );
   }
 }

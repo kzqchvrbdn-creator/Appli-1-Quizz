@@ -1,0 +1,7 @@
+order,round,pool,type,theme,prompt,answer,imageUrl,imageUrlB,optionA,optionB,optionC,optionD,durationSeconds,blurLevel
+1,round1,poule-a,truefalse,Graphisme,"Le violet #554696 est une couleur primaire.",Faux,,,,Vrai,Faux,,,0,14
+2,round1,poule-a,blur,Image floutee,"Quel objet se cache derriere cette image ?",Un appareil photo,https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=1200&auto=format&fit=crop,,,,,,0,18
+3,round1,poule-b,image,Culture visuelle,"Cette affiche utilise-t-elle une composition symetrique ?",Oui,https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?w=1200&auto=format&fit=crop,,,Oui,Non,,,0,14
+4,round2,duel-1,text,Champ lexical,"Theme : typographie. Donnez des mots du champ lexical.",Reponse libre,,,,,,,,600,14
+5,round3,buzz,text,Pop culture,"Quel studio a cree le logo a la pomme croquee ?",Apple,,,,,,,,0,14
+6,final,final,text,Finale,"Question finale : quelle equipe repond le plus vite et correctement ?",Admin decide,,,,,,,,60,14

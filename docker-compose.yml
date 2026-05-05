@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: lisaa-live-quiz-postgres
+    environment:
+      POSTGRES_USER: lisaa
+      POSTGRES_PASSWORD: lisaa
+      POSTGRES_DB: lisaa_quiz
+    ports:
+      - "5432:5432"
+    volumes:
+      - lisaa-live-quiz-data:/var/lib/postgresql/data
+
+volumes:
+  lisaa-live-quiz-data:
